@@ -1,0 +1,152 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Nov 02 18:14:03 2015
+
+@author: Ivanho
+"""
+import numpy as np
+import random
+#Aqui se colocan todas las funciones que se utilizan en el codigo
+def StringToFloat(ValorAInt):
+    ValorEnInt = float(ValorAInt)
+    return ValorEnInt
+def GetAreaRectangulo(NumAnchoDelNucleo,NumProfundidadDelNucleo):
+    AnchoNormalizado= NumAnchoDelNucleo/100
+    ProfundidadNormalizada=NumProfundidadDelNucleo/100
+    Area= AnchoNormalizado * ProfundidadNormalizada
+    return Area
+def GetModalLengthBase(Base,Haltura,Ancho):
+    ModalLength = (( Base )- Ancho)/100
+    return ModalLength
+def GetModalLengthBrazos(Haltura,Ancho):
+    ModalLengthBrazoInterno =  (Haltura - Ancho)/100
+    return ModalLengthBrazoInterno
+def GetFuerzaMagnetomotrizPrimaria(DevanadoPrimario,CorrientePrimaria):
+    FuerzaMagnetomotrizPrimaria= DevanadoPrimario * CorrientePrimaria
+    return FuerzaMagnetomotrizPrimaria
+def GetReluctanciaDelAire(PermeabilidadDelVacio,Area1,DistanciaDelAirgap):
+    if (Area1 != 0):
+       ReluctanciaDelAire = ((DistanciaDelAirgap/100)/(PermeabilidadDelVacio  * (Area1 * 2.05) ))
+    else:
+        ReluctanciaDelAire = 0
+    return ReluctanciaDelAire
+def GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLength1,Area1):
+    if (Area1 != 0):    
+       ReluctanciaDelNucleo = ModalLength1 / (PermeabilidadDelVacio * NumPermeabilidadDelNucleo * Area1 )
+    else:  
+       ReluctanciaDelNucleo = 0
+    return ReluctanciaDelNucleo
+def GetArea(NumAnchoDelNucleo,NumProfundidadDelNucleo):
+    AnchoNormalizado= NumAnchoDelNucleo/100
+    ProfundidadNormalizada=NumProfundidadDelNucleo/100
+    if(AnchoNormalizado != 0):
+        Area= AnchoNormalizado * ProfundidadNormalizada
+    else:
+        Area = 0
+    return Area
+def GetReluctanciaSerie(R1,R2,R3):
+    ReluctanciaTotal = R1 + R2 + R3
+    return ReluctanciaTotal
+def GetReluctanciaParalelo(R1,R2):
+    ReluctanciaParalelo = ((R1*R2)/(R1 + R2))
+    return ReluctanciaParalelo
+def GetFlujoMagnetico(FuerzaMagnetomotrizPrimaria,ReluctanciaTotal):
+    FlujoMagnetico= FuerzaMagnetomotrizPrimaria/ReluctanciaTotal
+    return FlujoMagnetico
+def GetFuerzaMagnetomotrizDelDevanadoSecundario(ReluctanciaParaElDevanadoSecundario,FlujoMagnetico):
+    FuerzaMagnetomotrizEnElDevanadoSecundario = ReluctanciaTotal * FlujoMagnetico
+    return FuerzaMagnetomotrizEnElDevanadoSecundario
+def GetCorrienteInducidaEnElDevanadoSecundario(FuerzaMagnetomotrizEnElDevanadoSecundario,NumDevanadoSecundario):
+    CorrienteSecundaria = FuerzaMagnetomotrizEnElDevanadoSecundario / NumDevanadoSecundario
+    return CorrienteSecundaria
+def GetConstanteA(NumDevanadoPrimario,NumDevanadoSecundario):
+    A = NumDevanadoPrimario / NumDevanadoSecundario
+    return A
+def GetVoltajeSecundario(NumVoltajePrimario,ConstanteA):
+    VoltajeSecundario = NumVoltajePrimario /ConstanteA 
+    return VoltajeSecundario
+def GetPotenciaAparenteSecundaria(VoltajeSecundario,CorrienteSecundaria):
+    SSecundaria = VoltajeSecundario * CorrienteSecundaria
+    return SSecundaria
+################################################################
+print ("Introduzca las unidades en cm")
+print("##################################################")
+pi=3.1416
+PermeabilidadDelVacio= 4 * pi * .0000001
+PermeabilidadDelNucleo=raw_input("Introduzca la permeabilidad relativa del Material: ")
+BaseDelNucleo=raw_input("Introduzca la longitude de la base: ")
+AlturaDelNucleo=raw_input("Introduzca la Altura del Nucleo: ")
+AnchoDelRectangulo=raw_input("Introduzca el Ancho del Rectangulo: ")
+AnchoDeLaBarraInterna=raw_input("Introduzca el ancho del brazo interno: ")
+ProfundidadDelNucleo=raw_input("introduzca la profundidad del nucleo: ")
+DistanciaDelAirgap = raw_input("Introduzca el Largo del Airgap: ")
+CorrientePrimaria=raw_input("introduzca la corriente primaria: ")
+DevanadoPrimario=raw_input("Introduzca el numero de vueltas del devanado primario: ")
+VoltajePrimario=raw_input("Introduzca el voltaje primario: ")
+
+##esta parte transforma el input de string a float, el cual nos permite utilizar decimales 
+#En los calculos
+NumPermeabilidadDelNucleo = StringToFloat(PermeabilidadDelNucleo)
+NumBaseDelNucleo = StringToFloat(BaseDelNucleo)
+NumAlturaDelNucleo = StringToFloat(AlturaDelNucleo)
+NumAnchoDelRectangulo = StringToFloat(AnchoDelRectangulo)
+NumAnchoDeLaBarraInterna = StringToFloat(AnchoDeLaBarraInterna)
+NumProfundidadDelNucleo = StringToFloat(ProfundidadDelNucleo)
+NumDistanciaDelAirgap = StringToFloat(DistanciaDelAirgap)
+NumCorrientePrimaria = StringToFloat(CorrientePrimaria)
+NumDevanadoPrimario = StringToFloat(DevanadoPrimario)
+NumVoltajePrimario = StringToFloat(VoltajePrimario)
+######################################################Main
+#Calcula Reluctancias y modal Legnths
+ModalLengthBase1 = GetModalLengthBase(NumBaseDelNucleo,NumAlturaDelNucleo,NumAnchoDelRectangulo)
+ModalLengthBase2 = GetModalLengthBase(NumBaseDelNucleo,NumAlturaDelNucleo,NumAnchoDelRectangulo)
+AreaDelNucleo = GetArea(NumAnchoDelRectangulo,NumProfundidadDelNucleo)
+AreaDelBrazo = GetArea(NumAnchoDeLaBarraInterna,NumProfundidadDelNucleo)
+ReluctanciaDeLaBase1 = GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLengthBase1,AreaDelNucleo)
+ReluctanciaDeLaBase2 = GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLengthBase2,AreaDelNucleo)
+ModalLengthBrazoInterno = GetModalLengthBrazos(NumAlturaDelNucleo,NumAnchoDelRectangulo)
+ModalLengthBrazoIzquierdo = GetModalLengthBrazos(NumAlturaDelNucleo,NumAnchoDelRectangulo)
+ModalLengthBrazoDerecho = GetModalLengthBrazos(NumAlturaDelNucleo,NumAnchoDelRectangulo)
+ReluctanciaDelBrazoInterno =  GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLengthBrazoInterno,AreaDelBrazo)
+ReluctanciaDelBrazoIzquierdo =  GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLengthBrazoIzquierdo,AreaDelNucleo)
+ReluctanciaDelBrazoderecho =  GetReluctancia(NumPermeabilidadDelNucleo,PermeabilidadDelVacio,ModalLengthBrazoDerecho,AreaDelNucleo)
+ReluctanciaDelAirgapInterno = GetReluctanciaDelAire(PermeabilidadDelVacio,AreaDelBrazo,NumDistanciaDelAirgap)
+ReluctanciaDelAirgapIzquierdo = GetReluctanciaDelAire(PermeabilidadDelVacio,AreaDelNucleo,NumDistanciaDelAirgap)
+ReluctanciaDelAirgapDerecho = GetReluctanciaDelAire(PermeabilidadDelVacio,AreaDelNucleo,NumDistanciaDelAirgap)
+#Para Propositos de calculo de resistencias equivalentes, las reluctancias de las Bases
+#Son divididas entre 2 para tener un total de 10 reluctancias, a continuacion son las operaciones de reduccion de circuitos
+ReluctanciaBase1I = ReluctanciaDeLaBase1/2
+ReluctanciaBase1D = ReluctanciaDeLaBase1/2
+ReluctanciaBase2I = ReluctanciaDeLaBase2/2
+ReluctanciaBase2D = ReluctanciaDeLaBase2/2
+#####Reducciones serie para los brazos
+ReluctanciaIzquierda = GetReluctanciaSerie(ReluctanciaDelBrazoIzquierdo,ReluctanciaDelAirgapIzquierdo,0)
+ReluctanciaDerecha = GetReluctanciaSerie(ReluctanciaDelBrazoderecho,ReluctanciaDelAirgapDerecho,0)
+ReluctanciaCentral = GetReluctanciaSerie(ReluctanciaDelBrazoInterno,ReluctanciaDelAirgapInterno,0)
+###Reduccion serie Derecho Bases D con izquierdaBases I
+ReluctanciaIzquierdaConBases = GetReluctanciaSerie(ReluctanciaIzquierda,ReluctanciaBase1I,ReluctanciaBase2I)
+ReluctanciaDerechaConBases = GetReluctanciaSerie(ReluctanciaDerecha,ReluctanciaBase1D,ReluctanciaBase2D)
+## Reduccion Paralelo Derecha e izquierda
+if(ReluctanciaCentral != 0):
+    ReluctanciaDIB = GetReluctanciaParalelo(ReluctanciaIzquierdaConBases,ReluctanciaDerechaConBases)
+else:
+    ReluctanciaDIB = GetReluctanciaSerie(ReluctanciaIzquierdaConBases,ReluctanciaDerechaConBases,0)
+#UltimaReduccion en serie
+ReluctanciaTotal = GetReluctanciaSerie(ReluctanciaDIB,ReluctanciaCentral,0)
+FuerzaMagnetomotrizPrimaria = GetFuerzaMagnetomotrizPrimaria(NumDevanadoPrimario,NumCorrientePrimaria)
+FlujoMagnetico = GetFlujoMagnetico(FuerzaMagnetomotrizPrimaria,ReluctanciaTotal)
+print "El Flujo Magnetico es: ",FlujoMagnetico
+Decision1=raw_input("Desea Introducir Devanado Secundario? Yes or No: ")
+StrDecision1=str(Decision1)
+Yes="Yes"
+if StrDecision1 == Yes:
+    DevanadoSecundario = raw_input("Introduzca el numero de vueltas en el devanado secundario: ")
+    NumDevanadoSecundario = float(DevanadoSecundario)
+    FuerzaMagnetomotrizEnElDevanadoSecundario = GetFuerzaMagnetomotrizDelDevanadoSecundario(ReluctanciaTotal,FlujoMagnetico)
+    CorrienteSecundaria = GetCorrienteInducidaEnElDevanadoSecundario(FuerzaMagnetomotrizEnElDevanadoSecundario,NumDevanadoSecundario)
+    ConstanteA = GetConstanteA(NumDevanadoPrimario,NumDevanadoSecundario)
+    VoltajeSecundario = GetVoltajeSecundario(NumVoltajePrimario,ConstanteA)
+    SSecundaria = GetPotenciaAparenteSecundaria(VoltajeSecundario,CorrienteSecundaria)
+    print "La Potencia Aparente Secundaria Es: ", SSecundaria
+else:
+    print "Gracias Por usarme"
