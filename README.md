@@ -1,0 +1,2 @@
+# Ideal_transformer_Simulator
+Scripts describing transformer cores specifications and capabilities
